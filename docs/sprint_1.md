@@ -1,4 +1,3 @@
-markdown
 # CSC 370 – Database Systems — Progress Report, Sprint #1
 
 **University of Victoria · Department of Computer Science**
