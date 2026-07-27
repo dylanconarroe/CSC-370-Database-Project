@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS CSC370_hobby_platform;
 CREATE DATABASE CSC370_hobby_platform;
 USE CSC370_hobby_platform;
 
