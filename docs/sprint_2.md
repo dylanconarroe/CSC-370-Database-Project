@@ -21,7 +21,7 @@ Sprint 1 finished the relational model foundation: the ERD, the schema, the keys
 
 ## Evidence of Completion 
 - Normalized the schema to BCNF (normalization.md). We listed the functional dependencies and a key for all eleven relations, argued that every one is already in BCNF (no non-trivial dependency has a non-key determinant), and worked a full decomposition of a deliberately denormalized EnrolmentWide table to show the process and to justify why the production schema keeps Users separate from EnrolledIn.
-- Scaled the sample data and wrote ten complex queries (seed_data.sql, query_plan.sql).
+- Scaled the sample data and wrote 14 complex queries (seed_data.sql, query_plan.sql).
 - Demonstrated an index speedup with EXPLAIN (indexes.sql). We built a 50,000-row ActivityLog table so the optimiser has a realistic table to work with, then showed three indexes chosen the way the Accelerating SQL Queries material teaches, each with a before-and-after EXPLAIN. 
   - A selective single-column index on hobby_id takes the filter query from a full table scan (type ALL, about 50,000 rows) to an index lookup (type ref, key idx_log_hobby, about 2,273 rows). 
   - A foreign-key index on user_id turns a join to Users from a full scan into a lookup, which is why foreign-key columns are prime index targets. 
