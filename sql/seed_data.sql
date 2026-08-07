@@ -169,9 +169,6 @@ INSERT INTO EnrolledIn (user_id, hobby_id, progress, skill_level) VALUES
 (1, 1, 40, 'Intermediate'),
 (1, 4, 70, 'Beginner'),
 (2, 2, 85, 'Beginner'),
-(3, 3, 20, 'Beginner'),
-(4, 6, 60, 'Beginner'),
-(5, 7, 90, 'Beginner'),
 (2, 8, 10, 'Beginner'),
 (2, 16, 50, 'Beginner'),
 (3, 3, 20, 'Beginner'),
@@ -191,7 +188,7 @@ INSERT INTO EnrolledIn (user_id, hobby_id, progress, skill_level) VALUES
 INSERT INTO Communities (community_id, hobby_id, name, platform, invite_link) VALUES
 (1, 1, 'Rock Climbers United', 'Discord', 'https://example.com/invite/climbers'),
 (2, 2, 'Watercolor Circle', 'Discord', 'https://example.com/invite/painters'),
-(3, 3, 'Guitar Hub', 'Discord', 'https://example.com/invite/guitarists');
+(3, 3, 'Guitar Hub', 'Discord', 'https://example.com/invite/guitarists'),
 (4, 9, 'Chess Club Online', 'Discord', 'https://example.com/invite/chess'),
 (5, 17, 'Cycling Crew', 'Discord', 'https://example.com/invite/cycling');
 
