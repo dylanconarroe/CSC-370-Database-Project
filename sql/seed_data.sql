@@ -227,6 +227,35 @@ INSERT INTO EnrolledIn (user_id, hobby_id, progress, skill_level) VALUES
 (7, 22, 35, 'Beginner');
 
 
+-- ============================================================
+-- Reviews
+-- Weak entity identified by:
+-- (user_id, hobby_id, review_date)
+-- ============================================================
+
+INSERT INTO Review (
+    user_id,
+    hobby_id,
+    review_date,
+    rating,
+    comment
+) VALUES
+(1, 1, '2026-08-01', 4, 'Challenging at first but very rewarding.'),
+(1, 1, '2026-08-15', 5, 'Getting much more comfortable with climbing.'),
+
+(2, 2, '2026-08-05', 4, 'Good beginner hobby and easy to practice at home.'),
+
+(3, 3, '2026-08-07', 5, 'Really enjoying learning guitar so far.'),
+
+(4, 6, '2026-08-08', 4, 'The training plan is simple and easy to follow.'),
+
+(5, 7, '2026-08-10', 5, 'Bread making has been very rewarding.'),
+
+(6, 10, '2026-08-11', 4, 'A useful introduction to woodworking.'),
+
+(7, 13, '2026-08-12', 5, 'Knitting is relaxing and easier than expected.');
+
+
 -- Communities (1:1 with hobby -- only some hobbies have one)
 
 INSERT INTO Communities (community_id, hobby_id, name, platform, invite_link) VALUES
