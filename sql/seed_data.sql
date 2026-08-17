@@ -120,31 +120,75 @@ INSERT INTO Requires_tools (is_required, tool_id, hobby_id) VALUES
 
 -- Resources
 
-INSERT INTO Resources (resource_id, title, resource_type, url) VALUES
-(1, 'Intro to Rock Climbing Technique', 'Video', 'https://example.com/climbing-intro'),
-(2, 'Watercolor Basics for Beginners', 'Tutorial', 'https://example.com/watercolor-basics'),
-(3, 'Learn Guitar in 30 Days', 'Article', 'https://example.com/guitar-30-days'),
-(4, 'Bouldering Fundamentals', 'Video', 'https://example.com/bouldering-fundamentals'),
-(5, 'Wheel Throwing for Beginners', 'Tutorial', 'https://example.com/pottery-wheel-throwing'),
-(6, 'Couch to 5K Guide', 'Article', 'https://example.com/couch-to-5k'),
-(7, 'Artisan Bread at Home', 'Video', 'https://example.com/artisan-bread'),
-(8, 'Manual Camera Settings Explained', 'Article', 'https://example.com/manual-camera-settings'),
-(9,  'Chess Openings for Beginners', 'Video', 'https://example.com/chess-openings'),
-(10, 'Basic Woodworking Joints', 'Tutorial', 'https://example.com/woodworking-joints'),
-(11, 'Beginner Yoga Flow', 'Video', 'https://example.com/beginner-yoga'),
-(12, 'Kayaking Safety and Basics', 'Article', 'https://example.com/kayaking-basics'),
-(13, 'How to Knit a Scarf', 'Tutorial', 'https://example.com/knit-a-scarf'),
-(14, 'Birdwatching for Beginners', 'Article', 'https://example.com/birdwatching-beginners'),
-(15, 'Intro to 3D Modeling and Printing', 'Video', 'https://example.com/3d-printing-intro'),
-(16, 'Modern Calligraphy Basics', 'Tutorial', 'https://example.com/calligraphy-basics'),
-(17, 'Cycling for Beginners', 'Article', 'https://example.com/cycling-beginners'),
-(18, 'Freshwater Fishing 101', 'Video', 'https://example.com/fishing-101'),
-(19, 'Designing Your First Board Game', 'Article', 'https://example.com/board-game-design'),
-(20, 'Home Brewing Step by Step', 'Tutorial', 'https://example.com/home-brewing'),
-(21, 'Video Editing Fundamentals', 'Video', 'https://example.com/video-editing-fundamentals'),
-(22, 'Starting a Vegetable Garden', 'Article', 'https://example.com/vegetable-garden');
+INSERT INTO Resources (resource_id, title, url) VALUES
+(1, 'Intro to Rock Climbing Technique', 'https://example.com/climbing-intro'),
+(2, 'Watercolor Basics for Beginners', 'https://example.com/watercolor-basics'),
+(3, 'Learn Guitar in 30 Days', 'https://example.com/guitar-30-days'),
+(4, 'Bouldering Fundamentals', 'https://example.com/bouldering-fundamentals'),
+(5, 'Wheel Throwing for Beginners', 'https://example.com/pottery-wheel-throwing'),
+(6, 'Couch to 5K Guide', 'https://example.com/couch-to-5k'),
+(7, 'Artisan Bread at Home', 'https://example.com/artisan-bread'),
+(8, 'Manual Camera Settings Explained', 'https://example.com/manual-camera-settings'),
+(9, 'Chess Openings for Beginners', 'https://example.com/chess-openings'),
+(10, 'Basic Woodworking Joints', 'https://example.com/woodworking-joints'),
+(11, 'Beginner Yoga Flow', 'https://example.com/beginner-yoga'),
+(12, 'Kayaking Safety and Basics', 'https://example.com/kayaking-basics'),
+(13, 'How to Knit a Scarf', 'https://example.com/knit-a-scarf'),
+(14, 'Birdwatching for Beginners', 'https://example.com/birdwatching-beginners'),
+(15, 'Intro to 3D Modeling and Printing', 'https://example.com/3d-printing-intro'),
+(16, 'Modern Calligraphy Basics', 'https://example.com/calligraphy-basics'),
+(17, 'Cycling for Beginners', 'https://example.com/cycling-beginners'),
+(18, 'Freshwater Fishing 101', 'https://example.com/fishing-101'),
+(19, 'Designing Your First Board Game', 'https://example.com/board-game-design'),
+(20, 'Home Brewing Step by Step', 'https://example.com/home-brewing'),
+(21, 'Video Editing Fundamentals', 'https://example.com/video-editing-fundamentals'),
+(22, 'Starting a Vegetable Garden', 'https://example.com/vegetable-garden');
+
+
+-- ============================================================
+-- Resource Subtypes
+-- ============================================================
+
+-- Video subset of Resources
+INSERT INTO Video (resource_id, duration_minutes, platform) VALUES
+(1, 18, 'YouTube'),
+(4, 12, 'YouTube'),
+(7, 25, 'YouTube'),
+(9, 15, 'YouTube'),
+(11, 30, 'YouTube'),
+(15, 40, 'YouTube'),
+(18, 22, 'YouTube'),
+(21, 35, 'YouTube');
+
+
+-- Article subset of Resources
+INSERT INTO Article (resource_id, word_count, author) VALUES
+(3, 3200, 'Alex Morgan'),
+(6, 1800, 'Jamie Lee'),
+(8, 2100, 'Taylor Smith'),
+(12, 1700, 'Jordan Lee'),
+(14, 2300, 'Casey Brown'),
+(17, 1900, 'Morgan Davis'),
+(19, 2800, 'Sam Wilson'),
+(22, 2500, 'Riley Martin');
+
+
+-- Tutorial subset of Resources
+INSERT INTO Tutorial (
+    resource_id,
+    steps_count,
+    estimated_completion_minutes
+) VALUES
+(2, 10, 60),
+(5, 8, 90),
+(10, 12, 75),
+(13, 9, 120),
+(16, 7, 45),
+(20, 14, 150);
+
 
 -- HasResource (Hobby <-> Resource)
+
 INSERT INTO HasResource (hobby_id, resource_id) VALUES
 (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8),
 (9, 9), (10, 10), (11, 11), (12, 12), (13, 13), (14, 14), (15, 15), 

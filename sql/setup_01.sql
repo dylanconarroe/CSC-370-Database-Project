@@ -39,7 +39,6 @@ CREATE TABLE Equipment (
 CREATE TABLE Resources (
     `resource_id` int PRIMARY KEY,
     `title` varchar(128),
-    `resource_type` varchar(32),
     `url` varchar(500)
 );
 
