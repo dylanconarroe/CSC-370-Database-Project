@@ -78,6 +78,17 @@ Two Sprint 3 demos are interactive and are **not** run with `mysql < file`:
   three parts (commit rows in mysql, then `kill -9` the server and restart it in
   the terminal, then verify the rows are still there in mysql). Follow the
   PART 1 / PART 2 / PART 3 steps in the file.
+
+### 4. Sprint 4: advanced conceptual design
+
+    mysql -u root -t --force < sql/inheritance.sql   # Resource specialization: Video, Article, Tutorial subtypes
+    mysql -u root -t --force < sql/weak_entity.sql   # Review weak entity, identified through EnrolledIn
+
+Both scripts need the `--force` flag: the last demo in each triggers an error
+*on purpose*, the same intended-error pattern as `transactions.sql` and
+`constraints.sql` in Sprint 3, and without `--force` MySQL stops before the
+rest of the script finishes.
+
 ### Re-running the demos
  
 The demos change data (for example, `transactions.sql` enrolls a test user and
