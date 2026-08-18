@@ -19,12 +19,17 @@ hobby needs, track their own progress, and join communities built around hobbies
       constraints.sql  Consistency: CHECK constraints
       isolation.sql    Isolation: dirty read across two sessions
       durability.sql   Durability: committed data survives a crash (redo log)
+      inheritance.sql  Specialization: Resource split into Video/Article/Tutorial subtypes, with demos
+      weak_entity.sql  Weak entity: Review identified through EnrolledIn, with demos
+      
     docs/
       CSC_370_ERD.png  Entity-Relationship Diagram
       normalization.md BCNF normalization analysis
       sprint_1.md      Sprint 1 progress report
       sprint_2.md      Sprint 2 progress report
       sprint_3.md      Sprint 3 progress report
+      sprint_4.md      Sprint 4 progress report
+      sprint_4_conceptual_design.md    Inheritance and weak entity justification, quality evaluation, and change classification
       
       
 
