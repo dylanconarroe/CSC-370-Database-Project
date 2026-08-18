@@ -107,8 +107,8 @@ ORDER BY r.user_id, r.hobby_id, r.review_date;
 
 INSERT INTO Review (
     user_id,
-   hobby_id,
-   review_date,
+    hobby_id,
+    review_date,
     rating,
     comment
 )
