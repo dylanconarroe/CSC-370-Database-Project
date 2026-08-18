@@ -83,11 +83,9 @@ Nothing was removed, and nothing that used to be representable stopped being rep
 
 ## Missed Goals
 
-No goals were missed. Both were completed, and in two places we went past what was set. The weak entity was implemented and tested in MySQL rather than only drawn, and the transform classification written as "if time permits" was delivered.
+No goals were missed. Both the inheritance specialization and the weak entity were carried past the ERD-level goal into a running implementation: `inheritance.sql` creates `Video`, `Article`, and `Tutorial` and demonstrates disjoint subtype membership and the foreign-key dependency on `Resources`; `weak_entity.sql` creates `Review` and demonstrates its composite-key dependency on `EnrolledIn`. Both scripts end with an intentional constraint violation as evidence the dependency is enforced by the database, not just asserted in the diagram.
 
-One piece of scope is worth naming so it does not look like a silent gap. The Resource specialization exists in the ERD and in the write-up, but only `Review` has been created in the running database. The `Video`, `Article`, and `Tutorial` tables have not been written yet.
-
-That is not a miss against this sprint's goal, which was explicitly an ERD and justification goal. We spent the extra time on the weak entity instead, because it is the construct with the more interesting integrity behaviour to show. It is the first item scoped into Sprint 5, where it also serves as the worked example for the NULLs lesson.
+That is not a miss against this sprint's goal, which was explicitly an ERD and justification goal. Implementing both constructs goes past what was asked. `Review` still serves as the worked example for Sprint 5's NULLs lesson, alongside the now-completed Video/Article/Tutorial tables.
 
 ## Next Sprint Plan
 
@@ -107,7 +105,7 @@ Compute a minimal basis for the functional dependencies over the relations this 
 *Success:* `docs/3nf.md` containing the minimal basis, the relations produced by synthesis (including the added candidate-key relation if none of them already holds a superkey), a dependency-preservation verdict for each decomposition, and one worked example of the case where an FD's left side contains a prime attribute but is not itself a key. That case is the diagnostic for when a BCNF split loses a constraint. If our schema turns out to be dependency preserving already, we will show the loss on a constructed example, as we did with `EnrolmentWide` in Sprint 2, and state the BCNF versus 3NF trade-off as a design decision rather than a rule.
 
 **2. NULLs, using the Resource specialization as the worked case.**
-Write `sql/subclasses.sql` creating `Video`, `Article`, and `Tutorial`, keyed on `resource_id` with a foreign key to `Resource` and `ON DELETE CASCADE`. This lands the second half of the Sprint 4 ERD in the database. Then use it to demonstrate NULL behaviour rather than describe it.
+The `Video`, `Article`, and `Tutorial` tables already exist from Sprint 4 (`sql/inheritance.sql`). This sprint uses them to demonstrate NULL behaviour rather than describe it.
 
 *Success:* the three tables create and load; one report query that returns strictly more rows under `LEFT OUTER JOIN` than under `INNER JOIN`, with both counts recorded, showing that a NULL join attribute can never satisfy an equality test and that those rows are dropped silently without the outer join; at least one use of `COALESCE` to replace the NULLs the outer join introduces; and a short `docs/nulls.md` giving the three-valued-logic result for the comparison that causes the drop, noting that `GROUP BY` puts NULLs in their own group while a join predicate never matches them, and explaining why the Sprint 4 specialization removes NULLs from the schema instead of creating them.
 
