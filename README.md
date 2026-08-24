@@ -10,26 +10,34 @@ hobby needs, track their own progress, and join communities built around hobbies
 ## Repository structure
 
     sql/
-      setup_01.sql     Schema (CREATE DATABASE + all tables and keys)
-      seed_data.sql    Sample data to populate the database
-      query_plan.sql   Demonstration queries against the schema
-      indexes.sql      Index speedup shown with EXPLAIN (before/after)
-      security.sql     Views, a restricted account, and GRANT/REVOKE
-      transactions.sql Atomicity: COMMIT vs ROLLBACK
-      constraints.sql  Consistency: CHECK constraints
-      isolation.sql    Isolation: dirty read across two sessions
-      durability.sql   Durability: committed data survives a crash (redo log)
-      inheritance.sql  Specialization: Resource split into Video/Article/Tutorial subtypes, with demos
-      weak_entity.sql  Weak entity: Review identified through EnrolledIn, with demos
+      setup_01.sql                Schema: CREATE DATABASE + all 15 tables, keys and constraints
+      seed_data.sql               Sample data for every table
+      query_plan.sql              Demonstration queries against the schema
+      indexes.sql                 Index speedup shown with EXPLAIN (before/after)
+      security.sql                Views, a restricted account, and GRANT/REVOKE
+      transactions.sql            Atomicity: COMMIT vs ROLLBACK
+      constraints.sql             Consistency: CHECK constraints
+      isolation.sql               Isolation: dirty read across two sessions
+      durability.sql              Durability: committed data survives a crash (redo log)
+      inheritance.sql             Resource specialization: subtype demos, plus disjointness and totality tests
+      weak_entity.sql             Weak entity: Review identified through EnrolledIn, with demos
+      nulls_demo.sql              NULLs: inner vs outer join, COALESCE, three-valued logic, GROUP BY
+      constraints_triggers.sql    Attribute- and tuple-level CHECK, plus a derived-value trigger
+      simplifying_sql.sql         Query rewrites with both-direction equivalence checks
+
       
     docs/
-      CSC_370_ERD.png  Entity-Relationship Diagram
-      normalization.md BCNF normalization analysis
-      sprint_1.md      Sprint 1 progress report
-      sprint_2.md      Sprint 2 progress report
-      sprint_3.md      Sprint 3 progress report
-      sprint_4.md      Sprint 4 progress report
-      sprint_4_conceptual_design.md    Inheritance and weak entity justification, quality evaluation, and change classification
+      CSC_370_ERD.png                  Entity-Relationship Diagram
+      normalization.md                 BCNF normalization analysis
+      3nf.md                           3NF synthesis and dependency preservation
+      nulls.md                         NULL semantics, worked on the Resource specialization
+      simplifying_sql.md               Relational algebra operator counts and rewrites
+      sprint_1.md                      Sprint 1 progress report
+      sprint_2.md                      Sprint 2 progress report
+      sprint_3.md                      Sprint 3 progress report
+      sprint_4.md                      Sprint 4 progress report
+      sprint_4_conceptual_design.md    Inheritance and weak entity justification, quality evaluation, transforms
+      sprint_5.md                      Sprint 5 progress report (final)
       
       
 
@@ -88,6 +96,42 @@ Both scripts need the `--force` flag: the last demo in each triggers an error
 *on purpose*, the same intended-error pattern as `transactions.sql` and
 `constraints.sql` in Sprint 3, and without `--force` MySQL stops before the
 rest of the script finishes.
+
+
+### 5. Sprint 5: 3NF, NULLs, constraints and triggers, Advanced SQL
+ 
+    mysql -u root -t --force < sql/nulls_demo.sql
+    mysql -u root -t --force < sql/constraints_triggers.sql
+    mysql -u root -t --force < sql/simplifying_sql.sql
+ 
+`nulls_demo.sql` produces no errors. The same join returns **8 rows** under
+`INNER JOIN` and **22** under `LEFT OUTER JOIN`, and the 14-row gap is what the
+inner join silently discards. Demo 4 is the sharp one: filtering
+`platform <> 'YouTube'` returns **0 rows**, because for a hobby with no video the
+comparison is `UNKNOWN` rather than `TRUE`. Adding `OR platform IS NULL` returns
+**14**. Markers label the buggy and fixed versions, since the buggy one prints
+nothing.
+ 
+`constraints_triggers.sql` is *supposed* to fail four times, and those failures
+are the point:
+ 
+| Expected error | What it shows |
+|---|---|
+| `3819` | A CHECK cannot be added to a table that already violates it |
+| `3819` | Once added, the constraint rejects a bad insert |
+| `3813` | A column-level CHECK may not reference a second column, so the rule belongs at tuple level |
+| `3819` | The tuple-level CHECK rejects a tutorial that claims to take less time than it has steps |
+ 
+Then the trigger: `Hobbies.review_count` and `avg_rating` read `2 / 4.50` after
+being backfilled from the seeded reviews, `3 / 4.67` after one review rated 5,
+and `4 / 4.25` after one rated 3. The average rising then falling is the evidence
+the value is recomputed rather than incremented, and neither `INSERT` mentions
+those columns.
+ 
+`simplifying_sql.sql` rewrites three queries from `query_plan.sql` and checks each
+rewrite against its original in both directions. All three checks return
+`in_original_only = 0` and `in_rewrite_only = 0`.
+
 
 ### Re-running the demos
  
