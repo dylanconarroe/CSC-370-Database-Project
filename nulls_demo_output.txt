@@ -1,0 +1,133 @@
++------------------------------------------------------------+
+| marker                                                     |
++------------------------------------------------------------+
+| ===== INNER JOIN: hobbies with a Video resource only ===== |
++------------------------------------------------------------+
++----------+---------------+----------+------------------+
+| hobby_id | name          | platform | duration_minutes |
++----------+---------------+----------+------------------+
+|        1 | Rock Climbing | YouTube  |               18 |
+|        4 | Bouldering    | YouTube  |               12 |
+|        7 | Bread Baking  | YouTube  |               25 |
+|        9 | Chess         | YouTube  |               15 |
+|       11 | Yoga          | YouTube  |               30 |
+|       15 | 3D Printing   | YouTube  |               40 |
+|       18 | Fishing       | YouTube  |               22 |
+|       21 | Video Editing | YouTube  |               35 |
++----------+---------------+----------+------------------+
++----------------------+
+| inner_join_row_count |
++----------------------+
+|                    8 |
++----------------------+
++------------------------------------------------------------------------+
+| marker                                                                 |
++------------------------------------------------------------------------+
+| ===== LEFT OUTER JOIN: every hobby, Video columns NULL where n/a ===== |
++------------------------------------------------------------------------+
++----------+---------------------+----------+------------------+
+| hobby_id | name                | platform | duration_minutes |
++----------+---------------------+----------+------------------+
+|        1 | Rock Climbing       | YouTube  |               18 |
+|        2 | Watercolor Painting | NULL     |             NULL |
+|        3 | Guitar              | NULL     |             NULL |
+|        4 | Bouldering          | YouTube  |               12 |
+|        5 | Pottery             | NULL     |             NULL |
+|        6 | Running             | NULL     |             NULL |
+|        7 | Bread Baking        | YouTube  |               25 |
+|        8 | Photography         | NULL     |             NULL |
+|        9 | Chess               | YouTube  |               15 |
+|       10 | Woodworking         | NULL     |             NULL |
+|       11 | Yoga                | YouTube  |               30 |
+|       12 | Kayaking            | NULL     |             NULL |
+|       13 | Knitting            | NULL     |             NULL |
+|       14 | Birdwatching        | NULL     |             NULL |
+|       15 | 3D Printing         | YouTube  |               40 |
+|       16 | Calligraphy         | NULL     |             NULL |
+|       17 | Cycling             | NULL     |             NULL |
+|       18 | Fishing             | YouTube  |               22 |
+|       19 | Board Game Design   | NULL     |             NULL |
+|       20 | Home Brewing        | NULL     |             NULL |
+|       21 | Video Editing       | YouTube  |               35 |
+|       22 | Gardening           | NULL     |             NULL |
++----------+---------------------+----------+------------------+
++---------------------+
+| left_join_row_count |
++---------------------+
+|                  22 |
++---------------------+
++------------------------------------------------------------+
+| marker                                                     |
++------------------------------------------------------------+
+| ===== COALESCE: friendly report instead of raw NULLs ===== |
++------------------------------------------------------------+
++----------+---------------------+--------------------+------------------+
+| hobby_id | name                | platform           | duration_minutes |
++----------+---------------------+--------------------+------------------+
+|        1 | Rock Climbing       | YouTube            |               18 |
+|        2 | Watercolor Painting | No video available |                0 |
+|        3 | Guitar              | No video available |                0 |
+|        4 | Bouldering          | YouTube            |               12 |
+|        5 | Pottery             | No video available |                0 |
+|        6 | Running             | No video available |                0 |
+|        7 | Bread Baking        | YouTube            |               25 |
+|        8 | Photography         | No video available |                0 |
+|        9 | Chess               | YouTube            |               15 |
+|       10 | Woodworking         | No video available |                0 |
+|       11 | Yoga                | YouTube            |               30 |
+|       12 | Kayaking            | No video available |                0 |
+|       13 | Knitting            | No video available |                0 |
+|       14 | Birdwatching        | No video available |                0 |
+|       15 | 3D Printing         | YouTube            |               40 |
+|       16 | Calligraphy         | No video available |                0 |
+|       17 | Cycling             | No video available |                0 |
+|       18 | Fishing             | YouTube            |               22 |
+|       19 | Board Game Design   | No video available |                0 |
+|       20 | Home Brewing        | No video available |                0 |
+|       21 | Video Editing       | YouTube            |               35 |
+|       22 | Gardening           | No video available |                0 |
++----------+---------------------+--------------------+------------------+
++------------------------------------------------------------------------+
+| marker                                                                 |
++------------------------------------------------------------------------+
+| ===== Three-valued logic: platform <> YouTube excludes NULLs too ===== |
++------------------------------------------------------------------------+
++-------------------------------------------------------+
+| marker                                                |
++-------------------------------------------------------+
+| ===== BUGGY: platform <> YouTube, expect 0 rows ===== |
++-------------------------------------------------------+
++------------------------------------------------------+
+| marker                                               |
++------------------------------------------------------+
+| ===== FIXED: adding OR IS NULL, expect 14 rows ===== |
++------------------------------------------------------+
++----------+---------------------+----------+
+| hobby_id | name                | platform |
++----------+---------------------+----------+
+|        2 | Watercolor Painting | NULL     |
+|        3 | Guitar              | NULL     |
+|        5 | Pottery             | NULL     |
+|        6 | Running             | NULL     |
+|        8 | Photography         | NULL     |
+|       10 | Woodworking         | NULL     |
+|       12 | Kayaking            | NULL     |
+|       13 | Knitting            | NULL     |
+|       14 | Birdwatching        | NULL     |
+|       16 | Calligraphy         | NULL     |
+|       17 | Cycling             | NULL     |
+|       19 | Board Game Design   | NULL     |
+|       20 | Home Brewing        | NULL     |
+|       22 | Gardening           | NULL     |
++----------+---------------------+----------+
++------------------------------------------------------------+
+| marker                                                     |
++------------------------------------------------------------+
+| ===== GROUP BY: all NULL platforms land in one group ===== |
++------------------------------------------------------------+
++----------+----------------+
+| platform | resource_count |
++----------+----------------+
+| YouTube  |              8 |
+| NULL     |             14 |
++----------+----------------+

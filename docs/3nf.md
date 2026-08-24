@@ -11,9 +11,12 @@ The following analysis covers the relations affected by the Sprint 5 design chan
 
 
 1. Equipment(name, tool\_id, cost)
-2. Tutorial(resource\_id, steps\_count, estimated\_completion\_minutes)
-3. Hobbies(hobby\_id, name, description, difficulty, review\_count, avg\_rating)
-4. Review(user\_id, hobby\_id, review\_date, rating, comment)
+2. Resources(resource\_id, title, url)
+3. Video(resource\_id, duration\_minutes, platform)
+4. Article(resource\_id, word\_count, author)
+5. Tutorial(resource\_id, steps\_count, estimated\_completion\_minutes)
+6. Hobbies(hobby\_id, name, description, difficulty, review\_count, avg\_rating)
+7. Review(user\_id, hobby\_id, review\_date, rating, comment)
 
 
 
@@ -21,7 +24,7 @@ CHECK constraints were added to Equipment and Tutorial, review\_count and avg\_r
 
 
 
-NULL demos use relations such as Video and Resources, but those did not change their schemas or functional dependencies. 
+Resources, Video, Article and Tutorial are included because they changed this sprint as well. The three subtype relations were created from the Sprint 4 specialization, and resource\_type was dropped from Resources once subtype membership carried that information.
 
 
 
@@ -38,6 +41,42 @@ tool\_id = primary key:
 tool\_id -> name
 
 tool\_id -> cost
+
+
+
+#### Resources
+
+
+
+resource\_id = primary key
+
+resource\_id -> title
+
+resource\_id -> url
+
+
+
+#### Video
+
+
+
+resource\_id = primary key
+
+resource\_id -> duration\_minutes
+
+resource\_id -> platform
+
+
+
+#### Article
+
+
+
+resource\_id = primary key
+
+resource\_id -> word\_count
+
+resource\_id -> author
 
 
 
@@ -80,6 +119,18 @@ user\_id, hobby\_id, review\_date = primary key
 (user\_id, hobby\_id, review\_date) -> rating
 
 (user\_id, hobby\_id, review\_date) -> comment
+
+
+### Note on the derived attributes in Hobbies
+ 
+ 
+ 
+review\_count and avg\_rating are both determined by hobby\_id, so they raise no problem for either normal form. That verdict is worth qualifying.
+ 
+ 
+ 
+Normal forms only constrain functional dependencies inside a single relation. review\_count is COUNT(\*) over Review and avg\_rating is AVG(rating) over Review, so the same information is stored twice, and no normal form detects it because the dependency crosses a relation boundary. We added it deliberately, trading write cost for read cost, and the trigger in constraints\_triggers.sql keeps the two copies in agreement. The rule has to be maintained procedurally rather than declared because MySQL has no assertions.
+
 
 
 
@@ -157,6 +208,60 @@ Final synthesized relations: E1(tool\_id, name) and E2(tool\_id, cost)
 
 
 
+#### Resources:
+ 
+ 
+ 
+Original: Resources(resource\_id, title, url)
+ 
+Minimal Basis: resource\_id -> title, resource\_id -> url
+ 
+RS1(resource\_id, title)
+ 
+RS2(resource\_id, url)
+ 
+The candidate key of original is {resource\_id}, both RS1 and RS2 contain resource\_id, so at least one contains a superkey of original.
+ 
+Final synthesized relations: RS1(resource\_id, title) and RS2(resource\_id, url)
+ 
+ 
+ 
+#### Video:
+ 
+ 
+ 
+Original: Video(resource\_id, duration\_minutes, platform)
+ 
+Minimal Basis: resource\_id -> duration\_minutes, resource\_id -> platform
+ 
+V1(resource\_id, duration\_minutes)
+ 
+V2(resource\_id, platform)
+ 
+The candidate key of original is {resource\_id}, both V1 and V2 contain resource\_id, so at least one contains a superkey of original.
+ 
+Final synthesized relations: V1(resource\_id, duration\_minutes) and V2(resource\_id, platform)
+ 
+ 
+ 
+#### Article:
+ 
+ 
+ 
+Original: Article(resource\_id, word\_count, author)
+ 
+Minimal Basis: resource\_id -> word\_count, resource\_id -> author
+ 
+A1(resource\_id, word\_count)
+ 
+A2(resource\_id, author)
+ 
+The candidate key of original is {resource\_id}, both A1 and A2 contain resource\_id, so at least one contains a superkey of original.
+ 
+Final synthesized relations: A1(resource\_id, word\_count) and A2(resource\_id, author)
+ 
+ 
+ 
 #### Tutorial:
 
 
@@ -171,7 +276,7 @@ T2(resource\_id, estimated\_completion\_minutes)
 
 The candidate key of original is {resource\_id}, both T1 and T2 contain resource\_id, so at least one contains a superkey of original.
 
-Final sysnthesized relations: T1(resource\_id, steps\_count) and T2(resource\_id, estimated\_completion\_minutes)
+Final synthesized relations: T1(resource\_id, steps\_count) and T2(resource\_id, estimated\_completion\_minutes)
 
 
 
@@ -193,7 +298,7 @@ H4(hobby\_id, review\_count)
 
 H5(hobby\_id, avg\_rating)
 
-The candidate key of original is {hobby\_id}, every sub-relation contains hobby\_id, so synthesis contains superkey or original.
+The candidate key of original is {hobby\_id}, every sub-relation contains hobby\_id, so synthesis contains a superkey of original.
 
 Final synthesized relations: H1(hobby\_id, name), H2(hobby\_id, description), H3(hobby\_id, difficulty), H4(hobby\_id, review\_count), H5(hobby\_id, avg\_rating)
 
@@ -217,6 +322,10 @@ Final synthesized relations: R1(user\_id, hobby\_id, review\_date, rating), R2(u
 
 
 
+Note that this is the strict form of the algorithm, one relation per FD in the minimal basis. Grouping the FDs that share a left-hand side into a single relation gives back the originals and is the form usually used in practice.
+
+
+
 ## Comparison with Existing BCNF Design
 
 
@@ -226,6 +335,10 @@ Final synthesized relations: R1(user\_id, hobby\_id, review\_date, rating), R2(u
 
 
 Equipment(tool\_id, name, cost), tool\_id is primary key, so Equipment is in BCNF.
+
+
+
+Resources(resource\_id, title, url), Video(resource\_id, duration\_minutes, platform) and Article(resource\_id, word\_count, author), resource\_id is primary key in each, so all three are in BCNF.
 
 
 
@@ -249,7 +362,19 @@ The synthesis algorithm produced:
 
 E1(tool\_id, name), E2(tool\_id, cost)
 
-
+ 
+ 
+RS1(resource\_id, title), RS2(resource\_id, url)
+ 
+ 
+ 
+V1(resource\_id, duration\_minutes), V2(resource\_id, platform)
+ 
+ 
+ 
+A1(resource\_id, word\_count), A2(resource\_id, author)
+ 
+ 
 
 T1(resource\_id, steps\_count), T2(resource\_id, estimated\_completion\_minutes)
 
@@ -263,9 +388,9 @@ R1(user\_id, hobby\_id, review\_date, rating), R2(user\_id, hobby\_id, review\_d
 
 
 
-The existing BCNF schema keeps attributes having the same determinant together, while the 3NF synthesis creates a separate porojection for each FD.
+The existing BCNF schema keeps attributes having the same determinant together, while the 3NF synthesis creates a separate projection for each FD.
 
-Ex) Equipment(tool\_id, name, cost) stores both dependencies together, whereas the 3NF synthesis gives E1(tool\_id, name) and E2(tool\_id, cost). Both designs satisfy at least 3NF, but the existing design avoids unnecessary fragmentation. 
+Ex) Equipment(tool\_id, name, cost) stores both dependencies together, whereas the 3NF synthesis gives E1(tool\_id, name) and E2(tool\_id, cost). Both designs satisfy BCNF, and therefore 3NF, but the existing design avoids unnecessary fragmentation. 
 
 
 
@@ -292,10 +417,6 @@ Ex) tool\_id -> cost is represented by E2(tool\_id, cost). The same holds for ev
 Existing Design: BCNF, Fragmentation = low, is Dependency Preserving
 
 3NF Synthesis: 3NF, Fragmentation = higher, is Dependency Preserving
-
-
-
-
 
 
 
@@ -361,7 +482,7 @@ The dependency C -> B is preserved directly in R1. However, the original depende
 
 
 
-### 3NF Comparision:
+### 3NF Comparison:
 
 
 
@@ -377,19 +498,8 @@ This shows the trade-off between 3NF and BCNF, since BCNF has the stronger norma
 
 
 
-For the actual Sprint 5 schema, the existing BCNF design provides both strong normalization and dependency preservation. Since in our existing Sprint 5 schema the existing BCNF relations already preserve every FD, there is no trade-off that arises and the 3NF synthesis introduces relations without providing any advantage, we will retain the existing BCNF design rather than replace it with more fragmented relations.
+For the actual Sprint 5 schema, the existing BCNF design provides both strong normalization and dependency preservation. Since the existing BCNF relations already preserve every FD, there is no trade-off that arises and the 3NF synthesis introduces relations without providing any advantage, we will retain the existing BCNF design rather than replace it with more fragmented relations.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+One qualification belongs with that conclusion. Every relation is in BCNF and every FD is checkable inside a single relation, but we also carry one deliberate denormalization that neither normal form can see: review\_count and avg\_rating duplicate information held in Review. It is maintained by a trigger rather than declared as a constraint. The schema is fully normalized in the formal sense and carries one redundancy we chose on purpose and maintain ourselves.

@@ -49,6 +49,36 @@ CREATE TABLE Category (
 );
 
 
+-- Resource Subtypes
+
+CREATE TABLE Video (
+    `resource_id` int PRIMARY KEY,
+    `duration_minutes` int NOT NULL,
+    `platform` varchar(64) NOT NULL,
+
+    FOREIGN KEY (resource_id) REFERENCES Resources (resource_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Article (
+    `resource_id` int PRIMARY KEY,
+    `word_count` int NOT NULL,
+    `author` varchar(128) NOT NULL,
+
+    FOREIGN KEY (resource_id) REFERENCES Resources (resource_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Tutorial (
+    `resource_id` int PRIMARY KEY,
+    `steps_count` int NOT NULL,
+    `estimated_completion_minutes` int NOT NULL,
+
+    FOREIGN KEY (resource_id) REFERENCES Resources (resource_id)
+        ON DELETE CASCADE
+);
+
+
 -- Realationship Realtions
 
 CREATE TABLE EnrolledIn (
@@ -71,6 +101,25 @@ CREATE TABLE Joins (
     FOREIGN KEY (user_id, hobby_id) REFERENCES EnrolledIn (user_id, hobby_id),
 
     FOREIGN KEY (hobby_id) REFERENCES Communities (hobby_id)
+);
+
+-- Review: weak entity identified through EnrolledIn.
+-- Borrows (user_id, hobby_id) and adds its partial key review_date.
+
+CREATE TABLE Review (
+    `user_id` int,
+    `hobby_id` int,
+    `review_date` date,
+    `rating` int NOT NULL,
+    `comment` varchar(500),
+
+    PRIMARY KEY (user_id, hobby_id, review_date),
+
+    FOREIGN KEY (user_id, hobby_id)
+        REFERENCES EnrolledIn (user_id, hobby_id)
+        ON DELETE CASCADE,
+
+    CHECK (rating BETWEEN 1 AND 5)
 );
 
 CREATE TABLE HasResource (

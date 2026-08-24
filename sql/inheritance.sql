@@ -13,58 +13,6 @@
 USE CSC370_hobby_platform;
 
 
--- Allows us to rerun this file while testing
-DROP TABLE IF EXISTS Video;
-DROP TABLE IF EXISTS Article;
-DROP TABLE IF EXISTS Tutorial;
-
-
--- ============================================================
--- VIDEO SUBTYPE
--- ============================================================
-
-CREATE TABLE Video (
-    resource_id INT PRIMARY KEY,
-    duration_minutes INT,
-    platform VARCHAR(64),
-
-    FOREIGN KEY (resource_id)
-        REFERENCES Resources(resource_id)
-        ON DELETE CASCADE
-);
-
-
--- ============================================================
--- ARTICLE SUBTYPE
--- ============================================================
-
-CREATE TABLE Article (
-    resource_id INT PRIMARY KEY,
-    word_count INT,
-    author VARCHAR(128),
-
-    FOREIGN KEY (resource_id)
-        REFERENCES Resources(resource_id)
-        ON DELETE CASCADE
-);
-
-
--- ============================================================
--- TUTORIAL SUBTYPE
--- ============================================================
-
-CREATE TABLE Tutorial (
-    resource_id INT PRIMARY KEY,
-    steps_count INT,
-    estimated_completion_minutes INT,
-
-    FOREIGN KEY (resource_id)
-        REFERENCES Resources(resource_id)
-        ON DELETE CASCADE
-);
-
-
-
 -- ============================================================
 -- DEMO 1: SHOW EACH RESOURCE SUBTYPE
 -- ============================================================
@@ -112,6 +60,8 @@ ORDER BY r.resource_id;
 -- DEMO 2: VERIFY DISJOINT SUBTYPE MEMBERSHIP
 -- ============================================================
 
+SELECT '===== SUBTYPE COUNTS =====' AS marker;
+
 SELECT
     (SELECT COUNT(*) FROM Video) AS videos,
     (SELECT COUNT(*) FROM Article) AS articles,
@@ -120,9 +70,44 @@ SELECT
 
 
 -- ============================================================
--- DEMO 3: FOREIGN KEY DEPENDENCY
+-- DEMO 3: VERIFY THE SPECIALIZATION IS DISJOINT
 -- ============================================================
 
+SELECT '===== DISJOINTNESS TEST (expect 0 rows) =====' AS marker;
+
+SELECT resource_id, COUNT(*) AS subtype_memberships
+FROM (
+    SELECT resource_id FROM Video
+    UNION ALL
+    SELECT resource_id FROM Article
+    UNION ALL
+    SELECT resource_id FROM Tutorial
+) AS all_memberships
+GROUP BY resource_id
+HAVING COUNT(*) > 1;
+
+
+-- ============================================================
+-- DEMO 4: VERIFY THE SPECIALIZATION IS TOTAL
+-- ============================================================
+
+SELECT '===== TOTALITY TEST (expect 0 rows) =====' AS marker;
+
+SELECT r.resource_id, r.title
+FROM Resources r
+LEFT JOIN Video    v ON r.resource_id = v.resource_id
+LEFT JOIN Article  a ON r.resource_id = a.resource_id
+LEFT JOIN Tutorial t ON r.resource_id = t.resource_id
+WHERE v.resource_id IS NULL
+  AND a.resource_id IS NULL
+  AND t.resource_id IS NULL;
+
+
+-- ============================================================
+-- DEMO 5: FOREIGN KEY DEPENDENCY
+-- ============================================================
+
+SELECT '===== FK TEST (expect ERROR 1452) =====' AS marker;
 
 INSERT INTO Video (
     resource_id,

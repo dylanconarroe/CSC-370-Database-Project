@@ -21,21 +21,13 @@ USE CSC370_hobby_platform;
 -- REVIEW WEAK ENTITY
 -- ============================================================
 
-CREATE TABLE Review (
-    user_id INT,
-    hobby_id INT,
-    review_date DATE,
-    rating INT NOT NULL,
-    comment VARCHAR(500),
-
-    PRIMARY KEY (user_id, hobby_id, review_date),
-
-    FOREIGN KEY (user_id, hobby_id)
-        REFERENCES EnrolledIn(user_id, hobby_id)
-        ON DELETE CASCADE,
-
-    CHECK (rating BETWEEN 1 AND 5)
-);
+-- Review is declared in setup_01.sql alongside the rest of the
+-- schema, with exactly the key structure described above:
+--     PRIMARY KEY (user_id, hobby_id, review_date)
+--     FOREIGN KEY (user_id, hobby_id) -> EnrolledIn ON DELETE CASCADE
+--     CHECK (rating BETWEEN 1 AND 5)
+-- It is not re-created here, because seed_data.sql already loaded
+-- its rows and this file only demonstrates the weak entity.
 
 
 -- ============================================================

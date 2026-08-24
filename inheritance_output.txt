@@ -1,0 +1,75 @@
+ERROR 1452 (23000) at line 112: Cannot add or update a child row: a foreign key constraint fails (`csc370_hobby_platform`.`video`, CONSTRAINT `video_ibfk_1` FOREIGN KEY (`resource_id`) REFERENCES `resources` (`resource_id`) ON DELETE CASCADE)
++-----------------------------+
+| marker                      |
++-----------------------------+
+| ===== VIDEO RESOURCES ===== |
++-----------------------------+
++-------------+-----------------------------------+------------------+----------+
+| resource_id | title                             | duration_minutes | platform |
++-------------+-----------------------------------+------------------+----------+
+|           1 | Intro to Rock Climbing Technique  |               18 | YouTube  |
+|           4 | Bouldering Fundamentals           |               12 | YouTube  |
+|           7 | Artisan Bread at Home             |               25 | YouTube  |
+|           9 | Chess Openings for Beginners      |               15 | YouTube  |
+|          11 | Beginner Yoga Flow                |               30 | YouTube  |
+|          15 | Intro to 3D Modeling and Printing |               40 | YouTube  |
+|          18 | Freshwater Fishing 101            |               22 | YouTube  |
+|          21 | Video Editing Fundamentals        |               35 | YouTube  |
++-------------+-----------------------------------+------------------+----------+
++-------------------------------+
+| marker                        |
++-------------------------------+
+| ===== ARTICLE RESOURCES ===== |
++-------------------------------+
++-------------+----------------------------------+------------+--------------+
+| resource_id | title                            | word_count | author       |
++-------------+----------------------------------+------------+--------------+
+|           3 | Learn Guitar in 30 Days          |       3200 | Alex Morgan  |
+|           6 | Couch to 5K Guide                |       1800 | Jamie Lee    |
+|           8 | Manual Camera Settings Explained |       2100 | Taylor Smith |
+|          12 | Kayaking Safety and Basics       |       1700 | Jordan Lee   |
+|          14 | Birdwatching for Beginners       |       2300 | Casey Brown  |
+|          17 | Cycling for Beginners            |       1900 | Morgan Davis |
+|          19 | Designing Your First Board Game  |       2800 | Sam Wilson   |
+|          22 | Starting a Vegetable Garden      |       2500 | Riley Martin |
++-------------+----------------------------------+------------+--------------+
++--------------------------------+
+| marker                         |
++--------------------------------+
+| ===== TUTORIAL RESOURCES ===== |
++--------------------------------+
++-------------+---------------------------------+-------------+------------------------------+
+| resource_id | title                           | steps_count | estimated_completion_minutes |
++-------------+---------------------------------+-------------+------------------------------+
+|           2 | Watercolor Basics for Beginners |          10 |                           60 |
+|           5 | Wheel Throwing for Beginners    |           8 |                           90 |
+|          10 | Basic Woodworking Joints        |          12 |                           75 |
+|          13 | How to Knit a Scarf             |           9 |                          120 |
+|          16 | Modern Calligraphy Basics       |           7 |                           45 |
+|          20 | Home Brewing Step by Step       |          14 |                          150 |
++-------------+---------------------------------+-------------+------------------------------+
++----------------------------+
+| marker                     |
++----------------------------+
+| ===== SUBTYPE COUNTS ===== |
++----------------------------+
++--------+----------+-----------+-----------------+
+| videos | articles | tutorials | total_resources |
++--------+----------+-----------+-----------------+
+|      8 |        8 |         6 |              22 |
++--------+----------+-----------+-----------------+
++-----------------------------------------------+
+| marker                                        |
++-----------------------------------------------+
+| ===== DISJOINTNESS TEST (expect 0 rows) ===== |
++-----------------------------------------------+
++-------------------------------------------+
+| marker                                    |
++-------------------------------------------+
+| ===== TOTALITY TEST (expect 0 rows) ===== |
++-------------------------------------------+
++-----------------------------------------+
+| marker                                  |
++-----------------------------------------+
+| ===== FK TEST (expect ERROR 1452) ===== |
++-----------------------------------------+

@@ -31,7 +31,8 @@ USE CSC370_hobby_platform;
 INSERT INTO Equipment (name, tool_id, cost) VALUES ('Broken Sensor', 999, -50);
 
 -- This is rejected: existing data (the row above) violates the
--- condition before the constraint even exists.
+-- condition before the constraint even exists. A CHECK cannot be
+-- attached to a table that is already in a state it forbids.
 -- Expected: ERROR 3819 (HY000): Check constraint 'chk_equipment_cost'
 -- is violated.
 ALTER TABLE Equipment
@@ -60,19 +61,17 @@ INSERT INTO Equipment (name, tool_id, cost) VALUES ('Cursed Sensor', 998, -1);
 -- Tutorial's rule is: estimated_completion_minutes must be >=
 -- steps_count. That condition needs two columns from the same
 -- row, so it cannot be attached to a single column definition.
--- To show why concretely: an inline (attribute-level) CHECK is
--- written immediately after the column it belongs to, at a point
--- in the CREATE TABLE statement where later-declared columns do
--- not exist yet. Attaching the two-column condition to
--- steps_count (declared before estimated_completion_minutes)
--- means referencing a column that isn't defined yet.
+-- An attribute-level CHECK may only reference the column it is
+-- attached to. MySQL parses the whole CREATE TABLE before resolving
+-- names, so it does find estimated_completion_minutes and then
+-- rejects the constraint for referencing a second column. That is
+-- the signal the rule belongs at the tuple level instead.
 -- ============================================================
 
 DROP TABLE IF EXISTS Tutorial_BadAttempt;
 
--- Expected: ERROR 1054 (42S22): Unknown column
--- 'estimated_completion_minutes' in 'check constraint
--- tutorial_badattempt_chk_1 expression'
+-- Expected: ERROR 3813 (HY000): Column check constraint
+-- 'tutorial_badattempt_chk_1' references other column.
 CREATE TABLE Tutorial_BadAttempt (
     resource_id INT PRIMARY KEY,
     steps_count INT CHECK (estimated_completion_minutes >= steps_count),
@@ -94,8 +93,8 @@ ALTER TABLE Tutorial
 
 -- Insert a resource + tutorial where the completion time is less
 -- than the step count -- violates the tuple-level rule.
-INSERT INTO Resources (resource_id, title, resource_type, url)
-VALUES (999, 'Impossible Tutorial', 'Tutorial', 'https://example.com/impossible');
+INSERT INTO Resources (resource_id, title, url)
+VALUES (999, 'Impossible Tutorial', 'https://example.com/impossible');
 
 -- Expected: ERROR 3819 (HY000): Check constraint 'chk_tutorial_time'
 -- is violated.
@@ -121,6 +120,11 @@ ALTER TABLE Hobbies
     ADD COLUMN review_count INT NOT NULL DEFAULT 0,
     ADD COLUMN avg_rating DECIMAL(3,2) DEFAULT NULL;
 
+    -- Initialize the derived columns with their initial values.
+    UPDATE Hobbies h SET
+        review_count = (SELECT COUNT(*)    FROM Review r WHERE r.hobby_id = h.hobby_id),
+        avg_rating   = (SELECT AVG(rating) FROM Review r WHERE r.hobby_id = h.hobby_id);
+
 DROP TRIGGER IF EXISTS trg_review_insert_update_hobby;
 
 DELIMITER $$
@@ -141,7 +145,7 @@ END$$
 
 DELIMITER ;
 
--- BEFORE: review_count and avg_rating start at their defaults.
+-- BEFORE: backfilled from the seeded reviews. Expect 2 and 4.50.
 SELECT hobby_id, name, review_count, avg_rating
 FROM Hobbies
 WHERE hobby_id = 1;
@@ -150,7 +154,7 @@ WHERE hobby_id = 1;
 -- is already in EnrolledIn from seed_data.sql). The insert
 -- statement itself never mentions review_count or avg_rating.
 INSERT INTO Review (user_id, hobby_id, review_date, rating, comment)
-VALUES (1, 1, '2026-08-01', 5, 'Great intro route, well worth the harness rental.');
+VALUES (1, 1, '2026-08-20', 5, 'Great intro route, well worth the harness rental.');
 
 -- AFTER: the trigger updated both derived columns on Hobbies
 -- without the INSERT statement above ever touching them.
@@ -161,7 +165,7 @@ WHERE hobby_id = 1;
 -- One more review on the same hobby, to show the average recompute
 -- correctly rather than just incrementing a counter.
 INSERT INTO Review (user_id, hobby_id, review_date, rating, comment)
-VALUES (1, 1, '2026-08-08', 3, 'Second visit, harder route, knees disagreed.');
+VALUES (1, 1, '2026-08-21', 3, 'Second visit, harder route, knees disagreed.');
 
 SELECT hobby_id, name, review_count, avg_rating
 FROM Hobbies

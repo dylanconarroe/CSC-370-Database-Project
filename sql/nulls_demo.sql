@@ -93,6 +93,11 @@ SELECT '===== Three-valued logic: platform <> YouTube excludes NULLs too =====' 
 -- because platform <> 'YouTube' evaluates to UNKNOWN, not TRUE,
 -- when platform is NULL -- and WHERE only keeps rows where the
 -- condition is TRUE.
+
+-- An empty result prints NOTHING in batch mode, so without the
+-- marker below this query would look like it never ran at all.
+SELECT '===== BUGGY: platform <> YouTube, expect 0 rows =====' AS marker;
+
 SELECT h.hobby_id, h.name, v.platform
 FROM Hobbies h
 JOIN HasResource hr ON h.hobby_id = hr.hobby_id
@@ -101,6 +106,12 @@ LEFT OUTER JOIN Video v ON r.resource_id = v.resource_id
 WHERE v.platform <> 'YouTube';
 
 -- The correct way to also catch the NULLs, if that was the intent:
+-- The gap between 0 rows above and 14 rows below IS the anomaly:
+-- those 14 hobbies have no video at all, which is arguably "not on
+-- YouTube", but the plain inequality threw every one of them away
+-- without an error or a warning.
+SELECT '===== FIXED: adding OR IS NULL, expect 14 rows =====' AS marker;
+
 SELECT h.hobby_id, h.name, v.platform
 FROM Hobbies h
 JOIN HasResource hr ON h.hobby_id = hr.hobby_id

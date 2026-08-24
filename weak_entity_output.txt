@@ -1,0 +1,31 @@
+ERROR 1452 (23000) at line 100: Cannot add or update a child row: a foreign key constraint fails (`csc370_hobby_platform`.`review`, CONSTRAINT `review_ibfk_1` FOREIGN KEY (`user_id`, `hobby_id`) REFERENCES `enrolledin` (`user_id`, `hobby_id`) ON DELETE CASCADE)
++---------+----------+-------------+--------+---------------------------------------------------+
+| user_id | hobby_id | review_date | rating | comment                                           |
++---------+----------+-------------+--------+---------------------------------------------------+
+|       1 |        1 | 2026-08-01  |      4 | Challenging at first but very rewarding.          |
+|       1 |        1 | 2026-08-15  |      5 | Getting much more comfortable with climbing.      |
+|       2 |        2 | 2026-08-05  |      4 | Good beginner hobby and easy to practice at home. |
+|       3 |        3 | 2026-08-07  |      5 | Really enjoying learning guitar so far.           |
+|       4 |        6 | 2026-08-08  |      4 | The training plan is simple and easy to follow.   |
+|       5 |        7 | 2026-08-10  |      5 | Bread making has been very rewarding.             |
+|       6 |       10 | 2026-08-11  |      4 | A useful introduction to woodworking.             |
+|       7 |       13 | 2026-08-12  |      5 | Knitting is relaxing and easier than expected.    |
++---------+----------+-------------+--------+---------------------------------------------------+
++---------+----------+-------------+--------+----------------------------------------------+
+| user_id | hobby_id | review_date | rating | comment                                      |
++---------+----------+-------------+--------+----------------------------------------------+
+|       1 |        1 | 2026-08-01  |      4 | Challenging at first but very rewarding.     |
+|       1 |        1 | 2026-08-15  |      5 | Getting much more comfortable with climbing. |
++---------+----------+-------------+--------+----------------------------------------------+
++---------+----------+----------+--------------+-------------+--------+---------------------------------------------------+
+| user_id | hobby_id | progress | skill_level  | review_date | rating | comment                                           |
++---------+----------+----------+--------------+-------------+--------+---------------------------------------------------+
+|       1 |        1 |       40 | Intermediate | 2026-08-01  |      4 | Challenging at first but very rewarding.          |
+|       1 |        1 |       40 | Intermediate | 2026-08-15  |      5 | Getting much more comfortable with climbing.      |
+|       2 |        2 |       85 | Beginner     | 2026-08-05  |      4 | Good beginner hobby and easy to practice at home. |
+|       3 |        3 |       20 | Beginner     | 2026-08-07  |      5 | Really enjoying learning guitar so far.           |
+|       4 |        6 |       60 | Beginner     | 2026-08-08  |      4 | The training plan is simple and easy to follow.   |
+|       5 |        7 |       90 | Beginner     | 2026-08-10  |      5 | Bread making has been very rewarding.             |
+|       6 |       10 |       45 | Intermediate | 2026-08-11  |      4 | A useful introduction to woodworking.             |
+|       7 |       13 |       80 | Beginner     | 2026-08-12  |      5 | Knitting is relaxing and easier than expected.    |
++---------+----------+----------+--------------+-------------+--------+---------------------------------------------------+
