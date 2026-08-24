@@ -28,7 +28,17 @@ WHERE rt.is_required = TRUE
 GROUP BY h.hobby_id, h.name;
 
 -- 3. Get all resources/tutorials for a specific hobby
-SELECT h.name AS hobby_name, r.title, r.resource_type, r.url
+--    resource_type was dropped from Resources in Sprint 4: subtype membership
+--    now carries that information, so storing the string too would duplicate it.
+--    We derive the label back from which subtype the resource belongs to.
+SELECT h.name AS hobby_name, r.title,
+       CASE
+           WHEN v.resource_id IS NOT NULL THEN 'Video'
+           WHEN a.resource_id IS NOT NULL THEN 'Article'
+           WHEN t.resource_id IS NOT NULL THEN 'Tutorial'
+       END AS resource_type,
+       r.url
+FROM Hobbies h
 FROM Hobbies h
 JOIN HasResource hr ON h.hobby_id = hr.hobby_id
 JOIN Resources r ON hr.resource_id = r.resource_id
