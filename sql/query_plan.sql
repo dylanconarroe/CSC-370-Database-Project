@@ -41,6 +41,9 @@ SELECT h.name AS hobby_name, r.title,
 FROM Hobbies h
 JOIN HasResource hr ON h.hobby_id = hr.hobby_id
 JOIN Resources r ON hr.resource_id = r.resource_id
+LEFT JOIN Video    v ON r.resource_id = v.resource_id
+LEFT JOIN Article  a ON r.resource_id = a.resource_id
+LEFT JOIN Tutorial t ON r.resource_id = t.resource_id
 WHERE h.hobby_id = 3;
 
 -- 4. Get a user's enrolled hobbies with progress and skill level
