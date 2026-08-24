@@ -39,7 +39,6 @@ SELECT h.name AS hobby_name, r.title,
        END AS resource_type,
        r.url
 FROM Hobbies h
-FROM Hobbies h
 JOIN HasResource hr ON h.hobby_id = hr.hobby_id
 JOIN Resources r ON hr.resource_id = r.resource_id
 WHERE h.hobby_id = 3;
